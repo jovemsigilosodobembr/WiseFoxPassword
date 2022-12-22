@@ -203,9 +203,9 @@ def improve_dictionary(file_to_open):
                     spechars.append(spec1 + spec2 + spec3)
 
     randnum = input(
-        "> Do you want to add some random numbers at the end of words? Y/[N]:"
+        "> Você quer adicionar alguns números aleatórios no final das palavras? Y/[N]:"
     ).lower()
-    leetmode = input("> Leet mode? (i.e. leet = 1337) Y/[N]: ").lower()
+    leetmode = input("> modo Leet? (i.e. leet = 1337) Y/[N]: ").lower()
 
     # init
     for i in range(6):
@@ -291,8 +291,8 @@ def interactive():
 
     print("\r\n")
 
-    profile["wife"] = input("> Partners) nome: ").lower()
-    profile["wifen"] = input("> Partners) apelido: ").lower()
+    profile["wife"] = input("> nome) nome: ").lower()
+    profile["wifen"] = input("> apelido) apelido: ").lower()
     wifeb = input("> Partners) data de nascimento (DDMMYYYY): ")
     while len(wifeb) != 0 and len(wifeb) != 8:
         print("\r\n[-] Você deve inserir 8 dígitos para aniversário!")
