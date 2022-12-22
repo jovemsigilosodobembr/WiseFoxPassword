@@ -670,80 +670,8 @@ def generate_wordlist_from_profile(profile):
 
     print_to_file(profile["name"] + ".txt", unique_list_finished)
         
-   
+     ]
 
-    # baixe os arquivos
-
-    intfiledown = int(filedown)
-
-    if intfiledown in arguments:
-
-        dire = "dictionaries/" + arguments[intfiledown][0] + "/"
-        mkdir_if_not_exists(dire)
-        files_to_download = arguments[intfiledown][1]
-
-        for fi in files_to_download:
-            url = CONFIG["global"]["dicturl"] + arguments[intfiledown][0] + "/" + fi
-            tgt = dire + fi
-            download_http(url, tgt)
-
-        print("[+] files saved to " + dire)
-
-    else:
-        print("[-] leaving.")
-
-
-# create the directory if it doesn't exist
-def mkdir_if_not_exists(dire):
-    if not os.path.isdir(dire):
-        os.mkdir(dire)
-
-
-# the main function
-def main():
-    """Interface de linha de comando para o utilitário wisefox"""
-
-    read_config(os.path.join(os.path.dirname(os.path.realpath(__file__)), "cupp.cfg"))
-
-    parser = get_parser()
-    args = parser.parse_args()
-
-    if not args.quiet:
-        print_cow()
-
-    if args.version:
-        version()
-    elif args.interactive:
-        interactive()
-    elif args.download_wordlist:
-        download_wordlist()
-    elif args.alecto:
-        alectodb_download()
-    elif args.improve:
-        improve_dictionary(args.improve)
-    else:
-        parser.print_help()
-
-
-# Separate into a function for testing purposes
-def get_parser():
-    """Crie e retorne um analisador (instância argparse.ArgumentParser) para main()
-    usar"""
-    parser = argparse.ArgumentParser(description="Common User Passwords Profiler")
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument(
-        "-p",
-        "--interactive",
-        action="store_true",
-        help="Perguntas interativas para criação de perfil de senha de usuário",
-    )
-    group.add_argument(
-        "-w",
-        dest="improve",
-        metavar="FILENAME",
-        help="Use this option to improve existing dictionary,"
-        " or WyD.pl output to make some pwnsauce",
-   )
   
 
     return parser
