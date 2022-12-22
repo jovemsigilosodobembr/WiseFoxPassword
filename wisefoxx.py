@@ -670,9 +670,9 @@ def generate_wordlist_from_profile(profile):
 
     print_to_file(profile["name"] + ".txt", unique_list_finished)
         
-    }
+   
 
-    # download the files
+    # baixe os arquivos
 
     intfiledown = int(filedown)
 
