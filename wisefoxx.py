@@ -245,8 +245,8 @@ def improve_dictionary(file_to_open):
             x
         ) in (
             unique_lista
-        ):  # if you want to add more leet chars, you will need to add more lines in cupp.cfg too...
-            x = make_leet(x)  # convert to leet
+        ):  # se você quiser adicionar mais leet chars, você precisará adicionar mais linhas em cupp.cfg também...
+            x = make_leet(x)  # converter para let
             unique_leet.append(x)
 
     unique_list = unique_lista + unique_leet
@@ -265,20 +265,20 @@ def improve_dictionary(file_to_open):
 
 
 def interactive():
-    """Implementation of the -i switch. Interactively question the user and
-    create a password dictionary file based on the answer."""
+    """Implementação da opção -i. Questione interativamente o usuário e
+    crie um arquivo de dicionário de senhas com base na resposta."""
 
-    print("\r\n[+] Insert the information about the victim to make a dictionary")
-    print("[+] If you don't know all the info, just hit enter when asked! ;)\r\n")
+    print("\r\n[+] Insira as informações sobre a vítima para fazer um dicionário")
+    print("[+] Se você não souber todas as informações, basta pressionar enter quando solicitado! ;)\r\n")
 
-    # We need some information first!
+    # Precisamos de algumas informações primeiro!
 
     profile = {}
 
     name = input("> Primeiro nome: ").lower()
     while len(name) == 0 or name == " " or name == "  " or name == "   ":
-        print("\r\n[-] You must enter a name at least!")
-        name = input("> Name: ").lower()
+        print("\r\n[-] você deve digitar um nome pelo menos!")
+        name = input("> Nome: ").lower()
     profile["name"] = str(name)
 
     profile["surname"] = input("> Sobrenome: ").lower()
@@ -669,292 +669,7 @@ def generate_wordlist_from_profile(profile):
     ]
 
     print_to_file(profile["name"] + ".txt", unique_list_finished)
-
-
-def download_http(url, targetfile):
-    print("[+] Downloading " + targetfile + " from " + url + " ... ")
-    webFile = urllib.request.urlopen(url)
-    localFile = open(targetfile, "wb")
-    localFile.write(webFile.read())
-    webFile.close()
-    localFile.close()
-
-
-def alectodb_download():
-    """Download csv from alectodb and save into local file as a list of
-    usernames and passwords"""
-
-    url = CONFIG["global"]["alectourl"]
-
-    print("\r\n[+] Checking if alectodb is not present...")
-
-    targetfile = "alectodb.csv.gz"
-
-    if not os.path.isfile(targetfile):
-
-        download_http(url, targetfile)
-
-    f = gzip.open(targetfile, "rt")
-
-    data = csv.reader(f)
-
-    usernames = []
-    passwords = []
-    for row in data:
-        usernames.append(row[5])
-        passwords.append(row[6])
-    gus = list(set(usernames))
-    gpa = list(set(passwords))
-    gus.sort()
-    gpa.sort()
-
-    print(
-        "\r\n[+] Exporting to alectodb-usernames.txt and alectodb-passwords.txt\r\n[+] Done."
-    )
-    f = open("alectodb-usernames.txt", "w")
-    f.write(os.linesep.join(gus))
-    f.close()
-
-    f = open("alectodb-passwords.txt", "w")
-    f.write(os.linesep.join(gpa))
-    f.close()
-
-
-def download_wordlist():
-    """Implementation of -l switch. Download wordlists from http repository as
-    defined in the configuration file."""
-
-    print("	\r\n	Choose the section you want to download:\r\n")
-
-    print("     1   Moby            14      french          27      places")
-    print("     2   afrikaans       15      german          28      polish")
-    print("     3   american        16      hindi           29      random")
-    print("     4   aussie          17      hungarian       30      religion")
-    print("     5   chinese         18      italian         31      russian")
-    print("     6   computer        19      japanese        32      science")
-    print("     7   croatian        20      latin           33      spanish")
-    print("     8   czech           21      literature      34      swahili")
-    print("     9   danish          22      movieTV         35      swedish")
-    print("    10   databases       23      music           36      turkish")
-    print("    11   dictionaries    24      names           37      yiddish")
-    print("    12   dutch           25      net             38      exit program")
-    print("    13   finnish         26      norwegian       \r\n")
-    print(
-        "	\r\n	Files will be downloaded from "
-        + CONFIG["global"]["dicturl"]
-        + " repository"
-    )
-    print(
-        "	\r\n	Tip: After downloading wordlist, you can improve it with -w option\r\n"
-    )
-
-    filedown = input("> Enter number: ")
-    filedown.isdigit()
-    while filedown.isdigit() == 0:
-        print("\r\n[-] Wrong choice. ")
-        filedown = input("> Enter number: ")
-    filedown = str(filedown)
-    while int(filedown) > 38 or int(filedown) < 0:
-        print("\r\n[-] Wrong choice. ")
-        filedown = input("> Enter number: ")
-    filedown = str(filedown)
-
-    download_wordlist_http(filedown)
-    return filedown
-
-
-def download_wordlist_http(filedown):
-    """ do the HTTP download of a wordlist """
-
-    mkdir_if_not_exists("dictionaries")
-
-    # List of files to download:
-    arguments = {
-        1: (
-            "Moby",
-            (
-                "mhyph.tar.gz",
-                "mlang.tar.gz",
-                "moby.tar.gz",
-                "mpos.tar.gz",
-                "mpron.tar.gz",
-                "mthes.tar.gz",
-                "mwords.tar.gz",
-            ),
-        ),
-        2: ("afrikaans", ("afr_dbf.zip",)),
-        3: ("american", ("dic-0294.tar.gz",)),
-        4: ("aussie", ("oz.gz",)),
-        5: ("chinese", ("chinese.gz",)),
-        6: (
-            "computer",
-            (
-                "Domains.gz",
-                "Dosref.gz",
-                "Ftpsites.gz",
-                "Jargon.gz",
-                "common-passwords.txt.gz",
-                "etc-hosts.gz",
-                "foldoc.gz",
-                "language-list.gz",
-                "unix.gz",
-            ),
-        ),
-        7: ("croatian", ("croatian.gz",)),
-        8: ("czech", ("czech-wordlist-ascii-cstug-novak.gz",)),
-        9: ("danish", ("danish.words.gz", "dansk.zip")),
-        10: (
-            "databases",
-            ("acronyms.gz", "att800.gz", "computer-companies.gz", "world_heritage.gz"),
-        ),
-        11: (
-            "dictionaries",
-            (
-                "Antworth.gz",
-                "CRL.words.gz",
-                "Roget.words.gz",
-                "Unabr.dict.gz",
-                "Unix.dict.gz",
-                "englex-dict.gz",
-                "knuth_britsh.gz",
-                "knuth_words.gz",
-                "pocket-dic.gz",
-                "shakesp-glossary.gz",
-                "special.eng.gz",
-                "words-english.gz",
-            ),
-        ),
-        12: ("dutch", ("words.dutch.gz",)),
-        13: (
-            "finnish",
-            ("finnish.gz", "firstnames.finnish.gz", "words.finnish.FAQ.gz"),
-        ),
-        14: ("french", ("dico.gz",)),
-        15: ("german", ("deutsch.dic.gz", "germanl.gz", "words.german.gz")),
-        16: ("hindi", ("hindu-names.gz",)),
-        17: ("hungarian", ("hungarian.gz",)),
-        18: ("italian", ("words.italian.gz",)),
-        19: ("japanese", ("words.japanese.gz",)),
-        20: ("latin", ("wordlist.aug.gz",)),
-        21: (
-            "literature",
-            (
-                "LCarrol.gz",
-                "Paradise.Lost.gz",
-                "aeneid.gz",
-                "arthur.gz",
-                "cartoon.gz",
-                "cartoons-olivier.gz",
-                "charlemagne.gz",
-                "fable.gz",
-                "iliad.gz",
-                "myths-legends.gz",
-                "odyssey.gz",
-                "sf.gz",
-                "shakespeare.gz",
-                "tolkien.words.gz",
-            ),
-        ),
-        22: ("movieTV", ("Movies.gz", "Python.gz", "Trek.gz")),
-        23: (
-            "music",
-            (
-                "music-classical.gz",
-                "music-country.gz",
-                "music-jazz.gz",
-                "music-other.gz",
-                "music-rock.gz",
-                "music-shows.gz",
-                "rock-groups.gz",
-            ),
-        ),
-        24: (
-            "names",
-            (
-                "ASSurnames.gz",
-                "Congress.gz",
-                "Family-Names.gz",
-                "Given-Names.gz",
-                "actor-givenname.gz",
-                "actor-surname.gz",
-                "cis-givenname.gz",
-                "cis-surname.gz",
-                "crl-names.gz",
-                "famous.gz",
-                "fast-names.gz",
-                "female-names-kantr.gz",
-                "female-names.gz",
-                "givennames-ol.gz",
-                "male-names-kantr.gz",
-                "male-names.gz",
-                "movie-characters.gz",
-                "names.french.gz",
-                "names.hp.gz",
-                "other-names.gz",
-                "shakesp-names.gz",
-                "surnames-ol.gz",
-                "surnames.finnish.gz",
-                "usenet-names.gz",
-            ),
-        ),
-        25: (
-            "net",
-            (
-                "hosts-txt.gz",
-                "inet-machines.gz",
-                "usenet-loginids.gz",
-                "usenet-machines.gz",
-                "uunet-sites.gz",
-            ),
-        ),
-        26: ("norwegian", ("words.norwegian.gz",)),
-        27: (
-            "places",
-            (
-                "Colleges.gz",
-                "US-counties.gz",
-                "World.factbook.gz",
-                "Zipcodes.gz",
-                "places.gz",
-            ),
-        ),
-        28: ("polish", ("words.polish.gz",)),
-        29: (
-            "random",
-            (
-                "Ethnologue.gz",
-                "abbr.gz",
-                "chars.gz",
-                "dogs.gz",
-                "drugs.gz",
-                "junk.gz",
-                "numbers.gz",
-                "phrases.gz",
-                "sports.gz",
-                "statistics.gz",
-            ),
-        ),
-        30: ("religion", ("Koran.gz", "kjbible.gz", "norse.gz")),
-        31: ("russian", ("russian.lst.gz", "russian_words.koi8.gz")),
-        32: (
-            "science",
-            (
-                "Acr-diagnosis.gz",
-                "Algae.gz",
-                "Bacteria.gz",
-                "Fungi.gz",
-                "Microalgae.gz",
-                "Viruses.gz",
-                "asteroids.gz",
-                "biology.gz",
-                "tech.gz",
-            ),
-        ),
-        33: ("spanish", ("words.spanish.gz",)),
-        34: ("swahili", ("swahili.gz",)),
-        35: ("swedish", ("words.swedish.gz",)),
-        36: ("turkish", ("turkish.dict.gz",)),
-        37: ("yiddish", ("yiddish.gz",)),
+        
     }
 
     # download the files
@@ -1028,7 +743,7 @@ def get_parser():
         metavar="FILENAME",
         help="Use this option to improve existing dictionary,"
         " or WyD.pl output to make some pwnsauce",
-   
+   )
   
 
     return parser
