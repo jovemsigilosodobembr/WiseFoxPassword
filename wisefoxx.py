@@ -986,7 +986,7 @@ def mkdir_if_not_exists(dire):
 
 # the main function
 def main():
-    """Command-line interface to the cupp utility"""
+    """Interface de linha de comando para o utilitário wisefox"""
 
     read_config(os.path.join(os.path.dirname(os.path.realpath(__file__)), "cupp.cfg"))
 
@@ -1012,15 +1012,15 @@ def main():
 
 # Separate into a function for testing purposes
 def get_parser():
-    """Create and return a parser (argparse.ArgumentParser instance) for main()
-    to use"""
+    """Crie e retorne um analisador (instância argparse.ArgumentParser) para main()
+    usar"""
     parser = argparse.ArgumentParser(description="Common User Passwords Profiler")
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        "-i",
+        "-p",
         "--interactive",
         action="store_true",
-        help="Interactive questions for user password profiling",
+        help="Perguntas interativas para criação de perfil de senha de usuário",
     )
     group.add_argument(
         "-w",
@@ -1028,28 +1028,8 @@ def get_parser():
         metavar="FILENAME",
         help="Use this option to improve existing dictionary,"
         " or WyD.pl output to make some pwnsauce",
-    )
-    group.add_argument(
-        "-l",
-        dest="download_wordlist",
-        action="store_true",
-        help="Download huge wordlists from repository",
-    )
-    group.add_argument(
-        "-a",
-        dest="alecto",
-        action="store_true",
-        help="Parse default usernames and passwords directly"
-        " from Alecto DB. Project Alecto uses purified"
-        " databases of Phenoelit and CIRT which were merged"
-        " and enhanced",
-    )
-    group.add_argument(
-        "-v", "--version", action="store_true", help="Show the version of this program."
-    )
-    parser.add_argument(
-        "-q", "--quiet", action="store_true", help="Quiet mode (don't print banner)"
-    )
+   
+  
 
     return parser
 
