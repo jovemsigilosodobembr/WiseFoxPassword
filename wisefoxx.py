@@ -1,231 +1,29 @@
 #!/usr/bin/python3
 
-import argparse
-import configparser
-import csv
-import functools
-import gzip
-import os
-import sys
-import urllib.error
-import urllib.parse
-import urllib.request
-import time
 
-__author__ = "Mebus"
-__license__ = "GPL"
-__version__ = "3.3.0"
-
-CONFIG = {}
+        
+       
 
 
-def read_config(filename):
-    """Read the given configuration file and update global variables to reflect
-    changes (CONFIG)."""
-
-    if os.path.isfile(filename):
-
-        # global CONFIG
-
-        # Reading configuration file
-        config = configparser.ConfigParser()
-        config.read(filename)
-
-        CONFIG["global"] = {
-            "years": config.get("years", "years").split(","),
-            "chars": config.get("specialchars", "chars").split(","),
-            "numfrom": config.getint("nums", "from"),
-            "numto": config.getint("nums", "to"),
-            "wcfrom": config.getint("nums", "wcfrom"),
-            "wcto": config.getint("nums", "wcto"),
-            "threshold": config.getint("nums", "threshold"),
-            "alectourl": config.get("alecto", "alectourl"),
-            "dicturl": config.get("downloader", "dicturl"),
-        }
-
-        # 1337 mode configs, well you can add more lines if you add it to the
-        # config file too.
-        leet = functools.partial(config.get, "leet")
-        leetc = {}
-        letters = {"a", "i", "e", "t", "o", "s", "g", "z"}
-
-        for letter in letters:
-            leetc[letter] = config.get("leet", letter)
-
-        CONFIG["LEET"] = leetc
-
-        return True
-
-    else:
-        print("Configuration file " + filename + " not found!")
-        sys.exit("Exiting.")
-
-        return False
+ 
+      
 
 
-def make_leet(x):
-    """convert string to leet"""
-    for letter, leetletter in CONFIG["LEET"].items():
-        x = x.replace(letter, leetletter)
-    return x
+       
 
 
-# for concatenations...
-def concats(seq, start, stop):
-    for mystr in seq:
-        for num in range(start, stop):
-            yield mystr + str(num)
 
 
-# for sorting and making combinations...
-def komb(seq, start, special=""):
-    for mystr in seq:
-        for mystr1 in start:
-            yield mystr + special + mystr1
 
 
-# print list to file counting words
 
 
-def print_to_file(filename, unique_list_finished):
-    f = open(filename, "w")
-    unique_list_finished.sort()
-    f.write(os.linesep.join(unique_list_finished))
-    f.close()
-    f = open(filename, "r")
-    lines = 0
-    for line in f:
-        lines += 1
-    f.close()
-    print(
-        "[+] Saving dictionary to \033[1;31m"
-        + filename
-        + "\033[1;m, counting \033[1;31m"
-        + str(lines)
-        + " words.\033[1;m"
-    )
-    inspect = input("> Ver Senha Ao Vivo? (Y) : ").lower()
-    if inspect == "y":
-        try:
-            with open(filename, "r+") as wlist:
-                data = wlist.readlines()
-                for line in data:
-                    print("\033[1;32m[" + filename + "] \033[1;33m" + line)
-                  
-                    os.system("clear")
-        except Exception as e:
-            print("[ERROR]: " + str(e))
-    else:
-        pass
-
-    print(
-        "[+] Criando Nova Wordlist \033[1;31m"
-        + filename
-        + "\033[1;m Wordlist criada com sucesso!"
-    )
 
 
-def print_cow():
-    print(" ___________ ")
-    print(" \033[07m  WiseFox.py! \033[27m# \033[07mGilmarScript \033[27mBR")
-    print("                        \033[07mU\033[27mBR")
-    print("                    \033[07mP\033[27mSENHA")
-    print(28 * " " + "[ Mebus | https://github.com/gilmarscript/]\r\n")
 
 
-def version():
-    """Display version"""
-
-    print("\r\n	\033[1;31m[ WiseFox.py ]  " + __version__ + "\033[1;m\r\n")
-    print("	* Hacked up by j0rgan - j0rgan@remote-exploit.org")
-    print("	* http://www.remote-exploit.org\r\n")
-    print("	Take a look ./README.md file for more info about the program\r\n")
 
 
-def improve_dictionary(file_to_open):
-    """Implementation of the -w option. Improve a dictionary by
-    interactively questioning the user."""
-
-    kombinacija = {}
-    komb_unique = {}
-
-    if not os.path.isfile(file_to_open):
-        exit("Error: file " + file_to_open + " does not exist.")
-
-    chars = CONFIG["global"]["chars"]
-    years = CONFIG["global"]["years"]
-    numfrom = CONFIG["global"]["numfrom"]
-    numto = CONFIG["global"]["numto"]
-
-    fajl = open(file_to_open, "r")
-    listic = fajl.readlines()
-    listica = []
-    for x in listic:
-        listica += x.split()
-
-    print("\r\n      *************************************************")
-    print("      *                    \033[1;31mWARNING!!!\033[1;m                 *")
-    print("      *         Using large wordlists in some         *")
-    print("      *       options bellow is NOT recommended!      *")
-    print("      *************************************************\r\n")
-
-    conts = input(
-        "> Do you want to concatenate all words from wordlist? Y/[N]: "
-    ).lower()
-
-    if conts == "y" and len(listic) > CONFIG["global"]["threshold"]:
-        print(
-            "\r\n[-] Maximum number of words for concatenation is "
-            + str(CONFIG["global"]["threshold"])
-        )
-        print("[-] Check configuration file for increasing this number.\r\n")
-        conts = input(
-            "> Do you want to concatenate all words from wordlist? Y/[N]: "
-        ).lower()
-
-    cont = [""]
-    if conts == "y":
-        for cont1 in listica:
-            for cont2 in listica:
-                if listica.index(cont1) != listica.index(cont2):
-                    cont.append(cont1 + cont2)
-
-    spechars = [""]
-    spechars1 = input(
-        "> Do you want to add special chars at the end of words? Y/[N]: "
-    ).lower()
-    if spechars1 == "y":
-        for spec1 in chars:
-            spechars.append(spec1)
-            for spec2 in chars:
-                spechars.append(spec1 + spec2)
-                for spec3 in chars:
-                    spechars.append(spec1 + spec2 + spec3)
-
-    randnum = input(
-        "> Você quer adicionar alguns números aleatórios no final das palavras? Y/[N]:"
-    ).lower()
-    leetmode = input("> modo Leet? (i.e. leet = 1337) Y/[N]: ").lower()
-
-    # init
-    for i in range(6):
-        kombinacija[i] = [""]
-
-    kombinacija[0] = list(komb(listica, years))
-    if conts == "y":
-        kombinacija[1] = list(komb(cont, years))
-    if spechars1 == "y":
-        kombinacija[2] = list(komb(listica, spechars))
-        if conts == "y":
-            kombinacija[3] = list(komb(cont, spechars))
-    if randnum == "y":
-        kombinacija[4] = list(concats(listica, numfrom, numto))
-        if conts == "y":
-            kombinacija[5] = list(concats(cont, numfrom, numto))
-
-    print("\r\n[+] Now making a dictionary...")
-
-    print("[+] Sorting list and removing duplicates...")
 
     for i in range(6):
         komb_unique[i] = list(dict.fromkeys(kombinacija[i]).keys())
